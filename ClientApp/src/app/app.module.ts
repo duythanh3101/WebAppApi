@@ -15,6 +15,7 @@ import { environment } from 'src/environments/environment';
 import { StoreModule } from '@ngrx/store';
 import { fileReducer, fileFeatureKey } from './redux/reducers/file.reducers';
 import { FileListPersistComponent } from './files/file-list-persist/file-list-persist.component';
+import { FetchDataComponent } from './fetch-data/fetch-data.component';
 
 @NgModule({
   declarations: [
@@ -22,14 +23,15 @@ import { FileListPersistComponent } from './files/file-list-persist/file-list-pe
     FileListComponent,
     NavbarComponent,
     FileEditComponent,
-    FileListPersistComponent
+    FileListPersistComponent,
+    FetchDataComponent
   ],
   imports: [
-    BrowserModule,
+    BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     AppRoutingModule,
     ReactiveFormsModule,
     HttpClientModule,
-    InMemoryWebApiModule.forRoot(FileData),
+    //InMemoryWebApiModule.forRoot(FileData),
     //StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
     StoreModule.forRoot({ }),
     StoreModule.forFeature(fileFeatureKey, fileReducer),
