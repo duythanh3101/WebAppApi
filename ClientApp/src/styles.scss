@@ -1,0 +1,12 @@
+/* You can add global styles to this file, and also import other style files */
+// Color
+$pink-icon-color: #d42c91;
+$green-icon-color: #23804d;
+$grey: #F5F5F5;
+$grey-darker: #cecccc;
+$white: #fff;
+
+
+@import "~bootstrap/scss/bootstrap.scss";
+@import '../src/app/styles/components/navbar';
+@import '../node_modules/@fortawesome/fontawesome-free/scss/fontawesome.scss';

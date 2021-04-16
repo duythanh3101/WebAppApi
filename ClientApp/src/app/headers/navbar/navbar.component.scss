@@ -1,0 +1,64 @@
+@import '../../../styles.scss';
+
+.navbar-background > *{
+    background-color: $grey !important;
+}
+
+.navbar-container {
+    padding: 0 !important;
+}
+
+ul {
+    li {
+        a {
+            i {
+                position: relative;
+                display: initial !important;
+                width: 25px;
+                height: 25px;
+            }
+            i:first-child {
+                color: $pink-icon-color;
+            }
+            img {
+                width: 25;
+                height: 25;
+            }
+        }
+    }
+}
+
+
+@include media-breakpoint-down(md) {
+    ul {
+        li {
+            display: block;
+            &:hover{
+                background: $grey-darker;
+            }
+            a {
+                i {
+                    position: relative;
+                    display: inline-block !important;
+                    margin-right: 0.25rem;
+                    fill: #fff;
+                    width: 25px;
+                    height: 25px;
+                }
+                i:first-child {
+                    color: $pink-icon-color;
+                }
+                i:last-child {
+                    margin-right: 0.25rem;
+                }
+    
+                img {
+                    width: 25;
+                    height: 25;
+                    margin-right: 0.25rem;
+                }
+            }
+        }
+    }
+    
+}

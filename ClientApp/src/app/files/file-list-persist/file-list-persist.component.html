@@ -1,0 +1,79 @@
+<div>
+	<div class="container-fluid table-container">
+
+		<button class="btn btn-outline-primary btn-sm" [disabled]='backBtnDisable' (click)='goBack()'>
+			<i class="fas fa-arrow-left back-icon"></i>
+			Back
+		</button>
+		<h1>Documents</h1>
+
+		<table class="table" id='table-list'>
+			<thead>
+				<tr>
+					<th>
+						<i class="fas fa-file"></i>
+					</th>
+					<th>
+						Name <i class="fas fa-chevron-down"></i>
+					</th>
+					<th>
+						Modified <i class="fas fa-chevron-down"></i>
+					</th>
+					<th>
+						Modified By <i class="fas fa-chevron-down"></i>
+					</th>
+					<th>+ Add column</th>
+				</tr>
+			</thead>
+			<tbody *ngIf='displayFileList$'>
+				<tr *ngFor='let item of displayFileList$ | async; let i=index' (click)='navigateTo(item)'>
+					<td data-label="File Type" [ngSwitch]="item.type">
+
+						<img *ngSwitchCase="'FILE'" src="https://img.icons8.com/color/50/000000/ms-excel.png"
+							alt="excel-icon" class="excel-icon" />
+						<i *ngSwitchCase="'FOLDER'" class="far fa-folder"></i>
+					</td>
+					<td data-label="Name">
+						<div class="col-name-item">
+							{{ item.name }}
+							<i class="fas fa-exclamation-circle" *ngIf='item.isNewFile'></i>
+						</div>
+					</td>
+					<td data-label="Modified">
+						{{ item.modified }}
+					</td>
+					<td data-label="Modified By">
+						{{ item.modifiedBy }}
+					</td>
+					<td></td>
+					<td>
+						<button class="btn btn-outline-primary btn-sm" [routerLink]="['/file-edit', item.id]">
+							Edit
+						</button>
+					</td>
+				</tr>
+
+			</tbody>
+		</table>
+	</div>
+
+	<!-- <h4>List of file</h4>
+	<div *ngIf='fileList$'>
+		<div *ngFor="let file of fileList$ | async; let i=index">
+			<span>{{i+1}}.</span> {{file.name}}
+		</div>
+	</div> -->
+
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+		integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+		crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+		integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+		crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+		integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+		crossorigin="anonymous"></script>
+	<script src="dist/js/home-page.js"></script>
+
+
+</div>

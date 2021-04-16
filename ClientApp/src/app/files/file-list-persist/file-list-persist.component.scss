@@ -1,0 +1,121 @@
+@import '../../../styles.scss';
+
+// Define variables
+$fa-font-path: '~@fortawesome/fontawesome-free/webfonts';
+
+.table-container {
+    padding: 0;
+  }
+  
+  table {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    table-layout: fixed;
+  
+    tr {
+      background-color: $white;
+      border: 1px solid white;
+      &:hover td {
+        background-color: #f5f5f5;
+      }
+    }
+  
+    th,
+    td {
+      padding: 0.625em;
+      text-align: left;
+  
+      &:first-child {
+        width: 5%;
+        text-align: right;
+      }
+  
+      .excel-icon {
+        width: 30;
+        height: 30;
+      }
+  
+      .col-name-item {
+        i {
+          visibility: hidden;
+          text-align: right;
+        }
+        i.is-new-file {
+          visibility: visible;
+        }
+      }
+    }
+  
+    th {
+      border-top: none !important;
+      font-size: 0.85em;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+  
+      &:first-child {
+        width: 5%;
+        text-align: right;
+      }
+      &:hover {
+        background-color: #f5f5f5;
+      }
+    }
+  }
+  
+  
+  .back-icon{
+    margin-bottom: 3px;
+  }
+  
+  @include media-breakpoint-down(md) {
+    table {
+      border: 1px solid $grey;
+  
+      thead {
+        display: none;
+      }
+      tr {
+        display: block;
+        margin-bottom: 0.625em;
+  
+  
+       
+      }
+  
+      td {
+        border-bottom: 1px solid #ddd;
+        display: block;
+        text-align: left;
+  
+        &::before {
+          content: attr(data-label);
+          float: left;
+          font-weight: bold;
+          text-transform: uppercase;
+          font-style: italic;
+          width: 30%;
+        }
+        &:last-child {
+          border-bottom: 0;
+          display: none;
+        }
+        &:first-child {
+          border-bottom: 0;
+          background-color: $grey;
+          width: 100%;
+          text-align: right;
+  
+          &::before {
+            text-align: left;
+            width: 30%;
+          }
+        }
+        // &:hover {
+        //   background-color: red !important;
+        // }
+  
+      }
+    }
+  }
+  

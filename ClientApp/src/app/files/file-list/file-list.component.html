@@ -1,0 +1,149 @@
+<div>
+	<!-- <div>
+        <nav class="navbar navbar-expand-lg navbar-light navbar-background navbar-container">
+            <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#navbarText"
+                aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon">
+            </button>
+            <div class="collapse navbar-collapse" id="navbarText">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link active" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-plus plus-icon"></i>
+                            Home
+                            <i class="fas fa-chevron-down"></i>
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <a class="dropdown-item" href="#">New</a>
+                            <a class="dropdown-item" href="#">Save</a>
+                            <a class="dropdown-item" href="#">Save as...</a>
+                        </div>
+                    </li>
+    
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="fas fa-upload"></i>
+                            Upload
+                            <i class="fas fa-chevron-down"></i>
+                        </a>
+                    </li>
+    
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="fas fa-sync"></i>
+                            Sync
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <img src="https://img.icons8.com/color/50/000000/ms-excel.png" alt="excel-icon" />
+                            Export to excel
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="fas fa-project-diagram"></i>
+                            Flow
+                        </a>
+                    </li>
+    
+                </ul>
+    
+            </div>
+        </nav>
+    </div> -->
+
+
+	<div class="container-fluid table-container">
+
+		<button class="btn btn-outline-primary btn-sm" [disabled]='backBtnDisable' (click)='goBack()'>
+			<i class="fas fa-arrow-left back-icon"></i>
+			Back
+		</button>
+		<h1>Documents</h1>
+
+		<!-- <div class="button-row">
+			<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#new-file-modal">
+				<i class="fas fa-file"></i> New file
+			</button>
+			<button type="submit" class="btn btn-primary" id="folderBtn">
+				<i class="fas fa-folder"></i> New folder
+			</button>
+		</div> -->
+
+		<table class="table" id='table-list'>
+			<thead>
+				<tr>
+					<th>
+						<i class="fas fa-file"></i>
+					</th>
+					<th>
+						Name <i class="fas fa-chevron-down"></i>
+					</th>
+					<th>
+						Modified <i class="fas fa-chevron-down"></i>
+					</th>
+					<th>
+						Modified By <i class="fas fa-chevron-down"></i>
+					</th>
+					<th>+ Add column</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr *ngFor='let item of displayFiles' (click)='navigateTo(item)'>
+					<td data-label="File Type" [ngSwitch]="item.type">
+
+						<img *ngSwitchCase="'FILE'" src="https://img.icons8.com/color/50/000000/ms-excel.png"
+							alt="excel-icon" class="excel-icon" />
+						<i *ngSwitchCase="'FOLDER'" class="far fa-folder"></i>
+					</td>
+					<td data-label="Name">
+						<div class="col-name-item">
+							{{ item.name }}
+							<i class="fas fa-exclamation-circle" *ngIf='item.isNewFile'></i>
+						</div>
+					</td>
+					<td data-label="Modified">
+						{{ item.modified }}
+					</td>
+					<td data-label="Modified By">
+						{{ item.modifiedBy }}
+					</td>
+					<td></td>
+					<td>
+						<button class="btn btn-outline-primary btn-sm" [routerLink]="['/file-edit', item.id]">
+							Edit
+						</button>
+					</td>
+					<!-- <td>
+						<button class="btn btn-outline-primary btn-sm" (click)='deleteFile(item)'>
+							Delete
+						</button>
+					</td> -->
+				</tr>
+
+			</tbody>
+		</table>
+	</div>
+
+	<!-- <h4>List of file</h4>
+	<div *ngIf='fileList$'>
+		<div *ngFor="let file of fileList$ | async; let i=index">
+			<span>{{i+1}}.</span> {{file.name}}
+		</div>
+	</div> -->
+
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+		integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+		crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+		integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+		crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+		integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+		crossorigin="anonymous"></script>
+	<script src="dist/js/home-page.js"></script>
+
+
+</div>
