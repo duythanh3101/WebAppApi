@@ -5,6 +5,13 @@ using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.EntityFrameworkCore;
+using WebAppApi.Data.EF;
+using WebAppApi.Common.Constants;
+using WebAppApi.Service.Interfaces;
+using WebAppApi.Service.Implementations;
+using WebAppApi.Data.UnitOfWork;
+using WebAppApi.Data.Repository;
 
 namespace WebAppApi
 {
@@ -20,7 +27,28 @@ namespace WebAppApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
+            services.AddDbContext<FileDbContext>(options =>
+             options.UseSqlServer(Configuration.GetConnectionString(SystemConstants.MainConnectionString)));
+
+            //Add Repository
+            services.AddTransient<IUnitOfWork, EFUnitOfWork>();
+            services.AddTransient(typeof(IAsyncRepository<,>), typeof(EFRepository<,>));
+            services.AddTransient<IFileService, FileService>();
+
+            services.AddControllers();
+
+            // Register the Swagger generator, defining 1 or more Swagger documents
+            services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v2", new Microsoft.OpenApi.Models.OpenApiInfo
+                {
+                    Title = "Place Info Service API",
+                    Version = "v2",
+                    Description = "Sample service for Learner",
+                });
+            });
+
+
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
@@ -58,18 +86,22 @@ namespace WebAppApi
                     pattern: "{controller}/{action=Index}/{id?}");
             });
 
-            app.UseSpa(spa =>
-            {
-                // To learn more about options for serving an Angular SPA from ASP.NET Core,
-                // see https://go.microsoft.com/fwlink/?linkid=864501
+            //app.UseSpa(spa =>
+            //{
+            //    // To learn more about options for serving an Angular SPA from ASP.NET Core,
+            //    // see https://go.microsoft.com/fwlink/?linkid=864501
 
-                spa.Options.SourcePath = "ClientApp";
+            //    spa.Options.SourcePath = "ClientApp";
 
-                if (env.IsDevelopment())
-                {
-                    spa.UseAngularCliServer(npmScript: "start");
-                }
-            });
+            //    if (env.IsDevelopment())
+            //    {
+            //        spa.UseAngularCliServer(npmScript: "start");
+            //    }
+            //});
+
+            app.UseSwagger();
+            app.UseSwaggerUI(options => options.SwaggerEndpoint("/swagger/v2/swagger.json", "File Services"));
+
         }
     }
 }
