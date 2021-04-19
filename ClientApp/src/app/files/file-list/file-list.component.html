@@ -91,7 +91,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr *ngFor='let item of displayFiles' (click)='navigateTo(item)'>
+				<tr *ngFor='let item of displayFiles' (dblclick)='navigateTo(item)'>
 					<td data-label="File Type" [ngSwitch]="item.type">
 
 						<img *ngSwitchCase="'FILE'" src="https://img.icons8.com/color/50/000000/ms-excel.png"

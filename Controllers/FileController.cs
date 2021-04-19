@@ -30,9 +30,10 @@ namespace WebAppApi.Controllers
 
         // GET api/<FileController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<IActionResult> Get(int parentId)
         {
-            return "value";
+            var files = await _fileService.Get(parentId);
+            return Ok(files);
         }
 
         // POST api/<FileController>

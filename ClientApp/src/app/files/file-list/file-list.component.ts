@@ -43,6 +43,7 @@ export class FileListComponent implements OnInit {
     this.currentParentId = Number(localStorage.getItem(parentId));
     this.dataSv.getData().subscribe({
       next: files => {
+        console.log('aaaa', files);
         this.files = files;
         this.displayFiles = files.filter(x => x.parentId === this.currentParentId);
 
