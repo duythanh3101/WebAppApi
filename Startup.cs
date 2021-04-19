@@ -12,6 +12,8 @@ using WebAppApi.Service.Interfaces;
 using WebAppApi.Service.Implementations;
 using WebAppApi.Data.UnitOfWork;
 using WebAppApi.Data.Repository;
+using WebAppApi.Service.AutoMapper;
+using AutoMapper;
 
 namespace WebAppApi
 {
@@ -29,6 +31,11 @@ namespace WebAppApi
         {
             services.AddDbContext<FileDbContext>(options =>
              options.UseSqlServer(Configuration.GetConnectionString(SystemConstants.MainConnectionString)));
+
+            //Add auto mapper
+            var config = AutoMapperConfiguration.RegisterMappings();
+            IMapper mapper = config.CreateMapper();
+            services.AddSingleton(mapper);
 
             //Add Repository
             services.AddTransient<IUnitOfWork, EFUnitOfWork>();
@@ -54,6 +61,8 @@ namespace WebAppApi
             {
                 configuration.RootPath = "ClientApp/dist";
             });
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -86,18 +95,18 @@ namespace WebAppApi
                     pattern: "{controller}/{action=Index}/{id?}");
             });
 
-            //app.UseSpa(spa =>
-            //{
-            //    // To learn more about options for serving an Angular SPA from ASP.NET Core,
-            //    // see https://go.microsoft.com/fwlink/?linkid=864501
+            app.UseSpa(spa =>
+            {
+                // To learn more about options for serving an Angular SPA from ASP.NET Core,
+                // see https://go.microsoft.com/fwlink/?linkid=864501
 
-            //    spa.Options.SourcePath = "ClientApp";
+                spa.Options.SourcePath = "ClientApp";
 
-            //    if (env.IsDevelopment())
-            //    {
-            //        spa.UseAngularCliServer(npmScript: "start");
-            //    }
-            //});
+                if (env.IsDevelopment())
+                {
+                    spa.UseAngularCliServer(npmScript: "start");
+                }
+            });
 
             app.UseSwagger();
             app.UseSwaggerUI(options => options.SwaggerEndpoint("/swagger/v2/swagger.json", "File Services"));

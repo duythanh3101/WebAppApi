@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { FileEnum } from 'src/app/entities/enums/FileEnum';
 import { FileType } from 'src/app/entities/FileType';
 import { Folder } from 'src/app/entities/Folder';
@@ -85,11 +85,17 @@ const dataFiles = [
 })
 export class DataFileService {
 
-  private fileUrl = 'api/files';
+  private fileUrl = 'api/file';
   private _data: Array<IFileEntity> = [];
-  constructor(private http: HttpClient) {
-
+  
+  constructor(private http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
+    console.log('base url', baseUrl);
+    http.get<IFileEntity[]>(baseUrl + "api/file").subscribe(result => {
+      console.log('files', result);
+    }, 
+    error => console.error(error));
   }
+
   getData = (): Observable<IFileEntity[]> => {
     return this.http.get<IFileEntity[]>(this.fileUrl)
       .pipe(
