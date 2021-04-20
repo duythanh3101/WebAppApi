@@ -23,7 +23,7 @@ export class FileEditComponent implements OnInit {
     Validators.maxLength(50)]],
     type: '',
     modifiedBy: '',
-    typeFile: {}
+    //typeFile: {}
   });
   //private sub: Subscription;
 
@@ -79,6 +79,8 @@ export class FileEditComponent implements OnInit {
     if (this.fileForm.valid) {
       if (this.fileForm.dirty) {
         const p = { ...this.currentFile, ...this.fileForm.value };
+        console.log('currentFile', this.currentFile)
+        console.log('fileForm', this.fileForm.value)
         if (p.id === 0) {
           this.dataSv.createFile(p)
             .subscribe({
