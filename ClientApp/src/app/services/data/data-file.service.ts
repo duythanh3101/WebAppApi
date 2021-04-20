@@ -88,7 +88,7 @@ export class DataFileService {
   private fileUrl = 'api/file';
   private _data: Array<IFileEntity> = [];
   
-  constructor(private http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
+  constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string) {
     console.log('base url', baseUrl);
     http.get<IFileEntity[]>(baseUrl + "api/file").subscribe(result => {
       console.log('files', result);
@@ -110,7 +110,7 @@ export class DataFileService {
   }
 
   createFile(file: IFileEntity): Observable<IFileEntity> {
-    //console.log('add', file);
+    console.log('add', file);
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     file.id = Math.floor(Math.random() * 999);;
     return this.http.post<IFileEntity>(this.fileUrl, file, { headers })

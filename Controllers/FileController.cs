@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebAppApi.Service.Interfaces;
+using WebAppApi.Service.ViewModels;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -38,20 +39,30 @@ namespace WebAppApi.Controllers
 
         // POST api/<FileController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<IActionResult> Create([FromBody] CreatedFileViewModel file)
         {
+            var fileId = _fileService.Create(file);
+            if (fileId == 0)
+                return BadRequest();
+
+            var newFile = await _fileService.Get(fileId);
+            return CreatedAtAction(nameof(Create), new { id = fileId }, newFile);
         }
 
         // PUT api/<FileController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut]
+        public IActionResult Update([FromBody] UpdatedFileViewModel request)
         {
+            _fileService.Update(request);
+            return Ok();
         }
 
         // DELETE api/<FileController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult Delete(int id)
         {
+            _fileService.Remove(id);
+            return Ok();
         }
     }
 }
