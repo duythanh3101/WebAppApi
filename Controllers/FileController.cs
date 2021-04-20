@@ -31,10 +31,10 @@ namespace WebAppApi.Controllers
 
         // GET api/<FileController>/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int parentId)
+        public async Task<IActionResult> GetById(int id)
         {
-            var files = await _fileService.Get(parentId);
-            return Ok(files);
+            var file = await _fileService.GetById(id);
+            return Ok(file);
         }
 
         // POST api/<FileController>
@@ -50,8 +50,8 @@ namespace WebAppApi.Controllers
         }
 
         // PUT api/<FileController>/5
-        [HttpPut]
-        public IActionResult Update([FromBody] UpdatedFileViewModel request)
+        [HttpPut("{id}")]
+        public IActionResult Update(int id, [FromBody] UpdatedFileViewModel request)
         {
             _fileService.Update(request);
             return Ok();

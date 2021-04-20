@@ -86,6 +86,7 @@ export class FileEditComponent implements OnInit {
               error: (err: string) => this.errorMessage = err
             });
         } else {
+          console.log("Update file", p);
           this.dataSv.updateFile(p)
             .subscribe({
               next: () => this.onSaveComplete(),
