@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,7 @@ namespace WebAppApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    //[Authorize]
     public class FileController : ControllerBase
     {
         private readonly IFileService _fileService;
@@ -21,6 +23,7 @@ namespace WebAppApi.Controllers
             _fileService = fileService;
         }
 
+        //[Authorize("DivisionManager")]
         // GET: api/<FileController>
         [HttpGet]
         public async Task<IActionResult> Get()

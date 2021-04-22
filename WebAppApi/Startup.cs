@@ -1,19 +1,22 @@
+using AutoMapper;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.AzureAD.UI;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.EntityFrameworkCore;
-using WebAppApi.Data.EF;
 using WebAppApi.Common.Constants;
-using WebAppApi.Service.Interfaces;
-using WebAppApi.Service.Implementations;
-using WebAppApi.Data.UnitOfWork;
+using WebAppApi.Data.EF;
 using WebAppApi.Data.Repository;
+using WebAppApi.Data.UnitOfWork;
 using WebAppApi.Service.AutoMapper;
-using AutoMapper;
+using WebAppApi.Service.Implementations;
+using WebAppApi.Service.Interfaces;
 
 namespace WebAppApi
 {
@@ -27,8 +30,43 @@ namespace WebAppApi
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
+        [System.Obsolete]
         public void ConfigureServices(IServiceCollection services)
         {
+            //services.AddAuthorization(options =>
+            //{
+            //    options.AddPolicy("Users",
+            //            policyBuilder => policyBuilder.RequireClaim("groups",
+            //            "d964799b-1b64-47ce-a9df-11fb2c3241df"));
+            //});
+            //services.AddAuthentication(sharedOptions =>
+            //{
+            //    sharedOptions.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            //    sharedOptions.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+            //})
+            //.AddAzureAD(options => Configuration.Bind("AzureAd", options))
+            //.AddCookie();
+
+            //services.Configure<CookiePolicyOptions>(options =>
+            //{
+            //    options.CheckConsentNeeded = context => true;
+            //    options.MinimumSameSitePolicy = Microsoft.AspNetCore.Http.SameSiteMode.None;
+            //});
+
+            //services.AddAuthentication(AzureADDefaults.AuthenticationScheme).AddAzureAD(options => Configuration.Bind("AzureAd", options));
+
+            //services.Configure<OpenIdConnectOptions>(AzureADDefaults.OpenIdScheme, options =>
+            //{
+            //    options.Authority = options.Authority + "/v2.0/";
+            //    options.TokenValidationParameters.ValidateIssuer = false;
+            //});
+            //services.AddAuthorization(options =>
+            //{
+            //    options.AddPolicy("DivisionManager",
+            //            policyBuilder => policyBuilder.RequireClaim("groups",
+            //            "d964799b-1b64-47ce-a9df-11fb2c3241df"));
+            //});
+
             services.AddDbContext<FileDbContext>(options =>
              options.UseSqlServer(Configuration.GetConnectionString(SystemConstants.MainConnectionString)));
 
@@ -86,7 +124,10 @@ namespace WebAppApi
                 app.UseSpaStaticFiles();
             }
 
-            app.UseRouting();
+            app.UseRouting(); 
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
