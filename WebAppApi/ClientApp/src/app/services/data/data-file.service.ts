@@ -87,17 +87,23 @@ export class DataFileService {
 
   private fileUrl = 'api/file';
   private _data: Array<IFileEntity> = [];
-  
+
   constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string) {
     console.log('base url', baseUrl);
     http.get<IFileEntity[]>(baseUrl + "api/file").subscribe(result => {
       console.log('files', result);
-    }, 
-    error => console.error(error));
+    },
+      error => console.error(error));
   }
+  
 
   getData = (): Observable<IFileEntity[]> => {
-    return this.http.get<IFileEntity[]>(this.fileUrl)
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Access-Control-Allow-Origin': '/'
+    });
+    return this.http.get<IFileEntity[]>(this.fileUrl, { headers })
       .pipe(
         tap(data => JSON.stringify(data)),
         catchError(this.handleError)
@@ -111,7 +117,11 @@ export class DataFileService {
 
   createFile(file: IFileEntity): Observable<IFileEntity> {
     console.log('add', file);
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Access-Control-Allow-Origin': '/'
+    });
     file.id = Math.floor(Math.random() * 999);;
     return this.http.post<IFileEntity>(this.fileUrl, file, { headers })
       .pipe(

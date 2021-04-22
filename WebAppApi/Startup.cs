@@ -3,13 +3,16 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.AzureAD.UI;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Identity.Web;
 using WebAppApi.Common.Constants;
 using WebAppApi.Data.EF;
 using WebAppApi.Data.Repository;
@@ -17,6 +20,8 @@ using WebAppApi.Data.UnitOfWork;
 using WebAppApi.Service.AutoMapper;
 using WebAppApi.Service.Implementations;
 using WebAppApi.Service.Interfaces;
+using Microsoft.Identity.Web.UI;
+using System;
 
 namespace WebAppApi
 {
@@ -28,6 +33,7 @@ namespace WebAppApi
         }
 
         public IConfiguration Configuration { get; }
+        readonly string MyAllowSpecificOrigins = "AllowAllOrigins";
 
         // This method gets called by the runtime. Use this method to add services to the container.
         [System.Obsolete]
@@ -47,25 +53,24 @@ namespace WebAppApi
             //.AddAzureAD(options => Configuration.Bind("AzureAd", options))
             //.AddCookie();
 
-            //services.Configure<CookiePolicyOptions>(options =>
-            //{
-            //    options.CheckConsentNeeded = context => true;
-            //    options.MinimumSameSitePolicy = Microsoft.AspNetCore.Http.SameSiteMode.None;
-            //});
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                options.CheckConsentNeeded = context => true;
+                options.MinimumSameSitePolicy = Microsoft.AspNetCore.Http.SameSiteMode.None;
+            });
 
             //services.AddAuthentication(AzureADDefaults.AuthenticationScheme).AddAzureAD(options => Configuration.Bind("AzureAd", options));
+            services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
+              .AddMicrosoftIdentityWebApp(Configuration.GetSection("AzureAd"));
 
-            //services.Configure<OpenIdConnectOptions>(AzureADDefaults.OpenIdScheme, options =>
-            //{
-            //    options.Authority = options.Authority + "/v2.0/";
-            //    options.TokenValidationParameters.ValidateIssuer = false;
-            //});
-            //services.AddAuthorization(options =>
-            //{
-            //    options.AddPolicy("DivisionManager",
-            //            policyBuilder => policyBuilder.RequireClaim("groups",
-            //            "d964799b-1b64-47ce-a9df-11fb2c3241df"));
-            //});
+            services.Configure<OpenIdConnectOptions>(AzureADDefaults.OpenIdScheme, options =>
+            {
+                options.Authority = options.Authority + "/v2.0/";
+                options.TokenValidationParameters.ValidateIssuer = false;
+                options.ClientSecret = "secret";
+            });         
+
+            services.AddCors();
 
             services.AddDbContext<FileDbContext>(options =>
              options.UseSqlServer(Configuration.GetConnectionString(SystemConstants.MainConnectionString)));
@@ -80,7 +85,16 @@ namespace WebAppApi
             services.AddTransient(typeof(IAsyncRepository<,>), typeof(EFRepository<,>));
             services.AddTransient<IFileService, FileService>();
 
-            services.AddControllers();
+            //services.AddControllers();
+            services.AddControllersWithViews(options =>
+            {
+                var policy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
+                options.Filters.Add(new AuthorizeFilter(policy));
+            });
+            services.AddRazorPages()
+             .AddMicrosoftIdentityUI();
 
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(options =>
@@ -124,7 +138,11 @@ namespace WebAppApi
                 app.UseSpaStaticFiles();
             }
 
-            app.UseRouting(); 
+            app.UseRouting();
+            app.UseCors(
+                    options => options.WithOrigins("https://localhost:44396").AllowAnyMethod()
+                );
+
 
             app.UseAuthentication();
             app.UseAuthorization();
