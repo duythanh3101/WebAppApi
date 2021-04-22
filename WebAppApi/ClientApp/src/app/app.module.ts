@@ -18,27 +18,41 @@ import { FetchDataComponent } from './fetch-data/fetch-data.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './auth.interceptor';
 import { LogLevel, OidcConfigService, AuthModule } from 'angular-auth-oidc-client';
+import { IPublicClientApplication, PublicClientApplication, InteractionType, BrowserCacheLocation } from '@azure/msal-browser';
+import { MsalGuard, MsalInterceptor, MsalBroadcastService, MsalInterceptorConfiguration, MsalModule, MsalService, MSAL_GUARD_CONFIG, MSAL_INSTANCE, MSAL_INTERCEPTOR_CONFIG, MsalGuardConfiguration } from '@azure/msal-angular';
+import * as auth from 'src/app/auth-config.json';
+const isIE = window.navigator.userAgent.indexOf("MSIE ") > -1 || window.navigator.userAgent.indexOf("Trident/") > -1;
 
-export function configureAuth(oidcConfigService: OidcConfigService) {
-  return () =>
-    oidcConfigService.withConfig({
-            stsServer: 'https://login.microsoftonline.com/82a1db19-67e4-4059-8d50-68b47df9b282/v2.0',
-            authWellknownEndpoint: 'https://login.microsoftonline.com/82a1db19-67e4-4059-8d50-68b47df9b282/v2.0',
-            redirectUrl: window.location.origin,
-            clientId: '207c9831-68ff-4b96-ac68-272a388e8328',
-            scope: 'openid profile offline_access email api://98328d53-55ec-4f14-8407-0ca5ff2f2d20/access_as_user',
-            responseType: 'code',
-            silentRenew: true,
-            useRefreshToken: true,
-            ignoreNonceAfterRefresh: true,
-            maxIdTokenIatOffsetAllowedInSeconds: 600,
-            issValidationOff: false, // this needs to be true if using a common endpoint in Azure
-            autoUserinfo: false,
-            logLevel: LogLevel.Debug,
-            customParams: {
-              prompt: 'select_account', // login, consent
-            },
-    });
+export function MSALInstanceFactory(): IPublicClientApplication {
+  return new PublicClientApplication({
+    auth: {
+      clientId: auth.credentials.clientId,
+      authority: 'https://login.microsoftonline.com/' + auth.credentials.tenantId,
+      redirectUri: auth.configuration.redirectUri
+    },
+    cache: {
+      cacheLocation: BrowserCacheLocation.LocalStorage,
+      storeAuthStateInCookie: isIE, // set to true for IE 11
+    },
+  });
+}
+
+export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
+  const protectedResourceMap = new Map<string, Array<string>>();
+  protectedResourceMap.set(auth.resources.todoListApi.resourceUri, auth.resources.todoListApi.resourceScopes);
+
+  return {
+    interactionType: InteractionType.Redirect,
+    protectedResourceMap
+  };
+}
+
+/**
+ * Set your default interaction type for MSALGuard here. If you have any
+ * additional scopes you want the user to consent upon login, add them here as well.
+ */
+export function MSALGuardConfigFactory(): MsalGuardConfiguration {
+  return { interactionType: InteractionType.Redirect };
 }
 
 @NgModule({
@@ -60,22 +74,31 @@ export function configureAuth(oidcConfigService: OidcConfigService) {
     StoreModule.forRoot({ }),
     StoreModule.forFeature(fileFeatureKey, fileReducer),
     !environment.production ? StoreDevtoolsModule.instrument() : [],
-    AuthModule.forRoot()
+    AuthModule.forRoot(),
+    MsalModule,
     
   ],
   providers: [
-    OidcConfigService,
-    {
-      provide: APP_INITIALIZER,
-      useFactory: configureAuth,
-      deps: [OidcConfigService],
-      multi: true,
-    },
     {
       provide: HTTP_INTERCEPTORS,
-      useClass: AuthInterceptor,
-      multi: true,
+      useClass: MsalInterceptor,
+      multi: true
     },
+    {
+      provide: MSAL_INSTANCE,
+      useFactory: MSALInstanceFactory
+    },
+    {
+      provide: MSAL_GUARD_CONFIG,
+      useFactory: MSALGuardConfigFactory
+    },
+    {
+      provide: MSAL_INTERCEPTOR_CONFIG,
+      useFactory: MSALInterceptorConfigFactory
+    },
+    MsalService,
+    MsalGuard,
+    MsalBroadcastService,
   ],
   bootstrap: [AppComponent]
 })

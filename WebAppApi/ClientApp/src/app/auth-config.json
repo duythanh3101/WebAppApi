@@ -1,0 +1,16 @@
+{
+    "credentials": {
+      "clientId": "49b7f7df-2b8f-414c-b1d1-40ab75be77ae",
+      "tenantId": "82a1db19-67e4-4059-8d50-68b47df9b282"
+    },
+    "configuration": {
+      "redirectUri": "http://localhost:4200",
+      "postLogoutRedirectUri": "http://localhost:4200"
+    },
+    "resources": {
+      "todoListApi": {
+        "resourceUri": "https://localhost:44396/api/File",
+        "resourceScopes": ["api://49b7f7df-2b8f-414c-b1d1-40ab75be77ae/duythanh3101"]
+      }
+    }     
+  }

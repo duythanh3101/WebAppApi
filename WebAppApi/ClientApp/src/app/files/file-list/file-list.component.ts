@@ -8,6 +8,7 @@ import { DataFileService } from 'src/app/services/data/data-file.service';
 import { selectFiles } from 'src/app/redux/store/selector/file.selectors';
 import { FileEntityState, fileFeatureKey } from 'src/app/redux/reducers/file.reducers';
 import { map, filter } from 'rxjs/operators';
+import { MsalService } from '@azure/msal-angular';
 
 const parentId = 'parentId';
 
@@ -35,7 +36,7 @@ export class FileListComponent implements OnInit {
   //#endregion [Properties]
 
   //#region [Constructor]
-  constructor(private dataSv: DataFileService) {
+  constructor(private dataSv: DataFileService, private authService: MsalService) {
 
   }
 
@@ -51,6 +52,11 @@ export class FileListComponent implements OnInit {
         localStorage.setItem('STORE_DATA', JSON.stringify(files));
       },
       error: err => console.error(err)
+    });
+
+    this.authService.handleRedirectObservable().subscribe({
+      next: (result) => console.log(result),
+      error: (error) => console.log(error)
     });
   }
   //#endregion [Constructor]

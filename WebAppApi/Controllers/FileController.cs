@@ -29,7 +29,6 @@ namespace WebAppApi.Controllers
         public async Task<IActionResult> Get()
         {
             var files = await _fileService.GetAll();
-            var a = User.Identity.Name;
             return Ok(files);
         }
 
